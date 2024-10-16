@@ -1,13 +1,12 @@
 import { client, db } from '.'
-import { availableHours, reservations, tables, users } from './schema'
+import { reservations, tables, users } from './schema'
 
 async function seed() {
   await db.delete(users)
   await db.delete(tables)
   await db.delete(reservations)
-  await db.delete(availableHours)
 
-  const usuarios = await db
+  await db
     .insert(users)
     .values([
       { username: 'luis', password: 'teste1234' },
@@ -16,14 +15,13 @@ async function seed() {
     ])
     .returning()
 
-  let mesas = Array.from({ length: 15 }, (_, index) => ({
-    number: index,
+  const mesas = Array.from({ length: 15 }, (_, index) => ({
     capacity: 4,
   }))
 
-  mesas = await db.insert(tables).values(mesas).returning()
-
-  seed().finally(() => {
-    client.end()
-  })
+  await db.insert(tables).values(mesas).returning()
 }
+
+seed().finally(() => {
+  client.end()
+})

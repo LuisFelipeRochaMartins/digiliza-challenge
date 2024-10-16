@@ -1,15 +1,17 @@
 import {
+  date,
   integer,
   pgEnum,
   pgTable,
   serial,
+  time,
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
-  id: serial('id'),
-  username: varchar('username', { length: 50 }).notNull(),
+  id: serial('id').primaryKey(),
+  username: varchar('username', { length: 50 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
@@ -17,8 +19,7 @@ export const users = pgTable('users', {
 })
 
 export const tables = pgTable('tables', {
-  id: serial('id'),
-  number: integer('number').notNull().unique(),
+  id: serial('id').primaryKey(),
   capacity: integer('capacity').notNull(),
 })
 
@@ -29,29 +30,18 @@ export const statusEnum = pgEnum('status', [
 ])
 
 export const reservations = pgTable('reservations', {
-  id: serial('id'),
+  id: serial('id').primaryKey(),
   userId: integer('user_id')
     .references(() => users.id)
     .notNull(),
   tableId: integer('table_id')
     .references(() => tables.id)
     .notNull(),
-  reservationDate: timestamp('reservation_date', {
-    withTimezone: true,
-  }).notNull(),
-  startTime: timestamp('start_time', { withTimezone: true }).notNull(),
-  endTime: timestamp('end_time', { withTimezone: true }).notNull(),
+  date: date('date', { mode: 'string' }).notNull(),
+  startTime: time('start_time').notNull(),
+  endTime: time('end_time').notNull(),
   status: statusEnum('status'),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .defaultNow(),
-})
-
-export const dayOfWeek = pgEnum('dayOfWeek', ['1', '2', '3', '4', '5', '6'])
-
-export const availableHours = pgTable('available_hours', {
-  id: serial('id'),
-  dayOfWeek: dayOfWeek('day_of_week'),
-  startTime: timestamp('start_time', { withTimezone: true }).notNull(),
-  endTime: timestamp('end_time', { withTimezone: true }).notNull(),
 })

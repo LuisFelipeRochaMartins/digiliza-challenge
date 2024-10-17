@@ -5,7 +5,10 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
+
 import { makeNewReservation } from './routes/make-new-reservation'
+import { registerNewUser } from './routes/register-new-user'
+import { login } from './routes/login'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -17,6 +20,8 @@ app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
 app.register(makeNewReservation)
+app.register(registerNewUser)
+app.register(login)
 
 app.listen({ port: 8080 }).then(() => {
   console.log('HTTP server running!')

@@ -1,3 +1,4 @@
+import * as argon2 from 'argon2'
 import { client, db } from '.'
 import { reservations, tables, users } from './schema'
 
@@ -6,12 +7,14 @@ async function seed() {
   await db.delete(tables)
   await db.delete(reservations)
 
+  const password = await argon2.hash('teste1234')
+
   await db
     .insert(users)
     .values([
-      { username: 'luis', password: 'teste1234' },
-      { username: 'carol', password: 'teste1234' },
-      { username: 'marcos', password: 'teste1234' },
+      { username: 'luis', password, role: 'admin' },
+      { username: 'carol', password, },
+      { username: 'marcos', password, },
     ])
     .returning()
 

@@ -8,6 +8,27 @@
       "when": 1729079874321,
       "tag": "0000_petite_boomerang",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1729120243910,
+      "tag": "0001_silky_marvel_apes",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729120335411,
+      "tag": "0002_last_zzzax",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1729120428698,
+      "tag": "0003_thin_epoch",
+      "breakpoints": true
     }
   ]
 }

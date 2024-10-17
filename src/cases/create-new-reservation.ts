@@ -14,14 +14,15 @@ export async function createNewReservation({
   endDate,
   capacity,
 }) {
-  const availableTable = await db.execute<AvailableTable>(sql`SELECT id
-    FROM tables
-    WHERE capacity >= ${capacity}
-      AND id NOT IN (
+  const availableTable = await db.execute<AvailableTable>(sql`
+    SELECT id
+      FROM tables
+     WHERE capacity >= ${capacity}
+       AND id NOT IN (
         SELECT table_id
-        FROM reservations 
-        WHERE date = ${date} 
-          AND (
+          FROM reservations 
+         WHERE date = ${date} 
+           AND (
             (start_time < ${startDate} AND end_time > ${endDate}) OR 
             (start_time < ${startDate} AND end_time > ${startDate})
           )

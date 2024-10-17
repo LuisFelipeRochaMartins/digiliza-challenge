@@ -1,5 +1,7 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
+import { getTokenFromRequest } from '../../utils/request'
+import { decrypt } from '../../utils/auth'
 import { createNewReservation } from '../../cases/create-new-reservation'
 
 export const makeNewReservation: FastifyPluginAsyncZod = async (
@@ -21,6 +23,10 @@ export const makeNewReservation: FastifyPluginAsyncZod = async (
     },
     async request => {
       const { userId, date, startDate, endDate, capacity } = request.body
+
+      const token = getTokenFromRequest(request)
+      decrypt(token)
+
       return await createNewReservation({
         userId,
         date,

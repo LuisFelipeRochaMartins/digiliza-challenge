@@ -9,10 +9,13 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 
+export const roles = pgEnum('role', ['admin', 'user'])
+
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   username: varchar('username', { length: 50 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
+  role: roles('role').default('user'),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -23,11 +26,7 @@ export const tables = pgTable('tables', {
   capacity: integer('capacity').notNull(),
 })
 
-export const statusEnum = pgEnum('status', [
-  'confirmada',
-  'cancelada',
-  'concluida',
-])
+const statusEnum = pgEnum('status', ['confirmada', 'cancelada', 'concluida'])
 
 export const reservations = pgTable('reservations', {
   id: serial('id').primaryKey(),

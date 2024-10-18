@@ -17,9 +17,9 @@ export async function decrypt(token: string) {
 
 export async function getRoleFromToken(token: string) {
   try {
-    const { payload } = await jwtVerify(token, key, {
+    const { payload } = (await jwtVerify(token, key, {
       algorithms: ['HS256'],
-    })
+    })) as { payload: { role: string } }
 
     return payload?.role
   } catch (_) {

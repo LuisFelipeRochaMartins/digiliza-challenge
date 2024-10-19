@@ -1,21 +1,17 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { getTokenFromRequest } from '../../utils/request'
-import { decrypt, getRoleFromToken } from '../../utils/auth'
+import { decrypt, getUsernameFromToken } from '../../utils/auth'
 import { createNewReservation } from '../../cases/create-new-reservation'
+import type { FastifyRequest } from 'fastify'
 
-async function authenticateRequest(request, reply) {
-  try {
-    const token = getTokenFromRequest(request)
+async function authenticateRequest(request: FastifyRequest, reply) {
+  const token = getTokenFromRequest(request, true)
 
-    if (!token) {
-      throw new Error('Invalid or expired token!')
-    }
-
-    decrypt(token)
-  } catch (_) {
-    reply.code(401).send({ error: 'Unauthorized' })
+  if (!token) {
+    throw new Error('Invalid or expired token!')
   }
+  decrypt(token)
 }
 
 export const makeNewReservation: FastifyPluginAsyncZod = async (
@@ -23,11 +19,10 @@ export const makeNewReservation: FastifyPluginAsyncZod = async (
   _options
 ) => {
   app.post(
-    '/reservation',
+    '/reservations',
     {
       schema: {
         body: z.object({
-          userId: z.number().int(),
           date: z.string().date(),
           startDate: z.string().time(),
           endDate: z.string().time(),
@@ -37,10 +32,13 @@ export const makeNewReservation: FastifyPluginAsyncZod = async (
       preHandler: [authenticateRequest],
     },
     async request => {
-      const { userId, date, startDate, endDate, capacity } = request.body
+      const { date, startDate, endDate, capacity } = request.body
+
+      const token = getTokenFromRequest(request, true)
+      const username = await getUsernameFromToken(token)
 
       return await createNewReservation({
-        userId,
+        username,
         date,
         startDate,
         endDate,

@@ -27,11 +27,23 @@ export async function getRoleFromToken(token: string) {
   }
 }
 
+export async function getUsernameFromToken(token: string) {
+  try {
+    const { payload } = (await jwtVerify(token, key, {
+      algorithms: ['HS256'],
+    })) as { payload: { username: string } }
+
+    return payload?.username
+  } catch (_) {
+    throw new Error('Invalid or Expired  JWT token!')
+  }
+}
+
 export async function encrypt({ username, password, role }) {
   const token = await new SignJWT({ username, password, role })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('2h')
+    .setExpirationTime('2 hours')
     .sign(key)
 
   return { token }

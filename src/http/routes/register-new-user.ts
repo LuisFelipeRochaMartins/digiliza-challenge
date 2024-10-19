@@ -15,6 +15,9 @@ export const registerNewUser: FastifyPluginAsyncZod = async (app, _options) => {
     },
     async request => {
       const { username, password } = request.body
+      console.log('username: ', username)
+      console.log('password: ', password)
+
       return await createNewUser({ username, password, isAdmin: false })
     }
   )
